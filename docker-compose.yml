@@ -1,0 +1,286 @@
+version: '3.8'
+
+services:
+  # --- BASES DE DATOS (MySQL Independientes) ---
+  db-auth:
+    image: mysql:8.0
+    container_name: mysql_auth
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_auth
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_auth:/var/lib/mysql
+
+  db-users:
+    image: mysql:8.0
+    container_name: mysql_users
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_users
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_users:/var/lib/mysql
+
+  db-books:
+    image: mysql:8.0
+    container_name: mysql_books
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_books
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_books:/var/lib/mysql
+
+  db-loans:
+    image: mysql:8.0
+    container_name: mysql_loans
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_loans
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_loans:/var/lib/mysql
+
+  db-inventory:
+    image: mysql:8.0
+    container_name: mysql_inventory
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_inventory
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_inventory:/var/lib/mysql
+
+  # --- NUEVAS BASES DE DATOS ---
+  db-return:
+    image: mysql:8.0
+    container_name: mysql_return
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_return
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto
+
+  db-search:
+    image: mysql:8.0
+    container_name: mysql_search
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_search
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto
+
+  db-fine:
+    image: mysql:8.0
+    container_name: mysql_fine
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_fine
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto
+
+  db-notification:
+    image: mysql:8.0
+    container_name: mysql_notification
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_notification
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto
+
+  db-report:
+    image: mysql:8.0
+    container_name: mysql_report
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_report
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    networks:
+      - red_interna_proyecto    
+
+
+
+  # --- ENTORNOS DE TRABAJO (Maven/Java 21) ---
+
+  workspace-auth:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_auth
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db-auth
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./Auth-Service:/app
+    working_dir: /app
+
+  workspace-users:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_users
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db-users
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./User-Service:/app
+    working_dir: /app
+
+  workspace-books:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_books
+    ports:
+      - "8083:8083"
+    depends_on:
+      - db-books
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./Book-Service:/app
+    working_dir: /app
+
+  workspace-loans:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_loans
+    ports:
+      - "8084:8084"
+    depends_on:
+      - db-loans
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./Loan-Service:/app
+    working_dir: /app
+
+  workspace-inventory:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_inventory
+    ports:
+      - "8085:8085"
+    depends_on:
+      - db-inventory
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./Inventory-Service:/app
+    working_dir: /app
+
+  # --- NUEVOS ENTORNOS DE TRABAJO (Maven) ---
+
+  workspace-return:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_return
+    ports:
+      - "8086:8086"
+    depends_on:
+      - db-return
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./Return-Service:/app
+    working_dir: /app
+
+  workspace-search:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_search
+    ports:
+      - "8087:8087"
+    depends_on:
+      - db-search
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./Search-Service:/app
+    working_dir: /app
+
+  workspace-fine:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_fine
+    ports:
+      - "8088:8088"
+    depends_on:
+      - db-fine
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./Fine-Service:/app
+    working_dir: /app
+
+  workspace-notification:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_notification
+    ports:
+      - "8089:8089"
+    depends_on:
+      - db-notification
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./Notification-Service:/app
+    working_dir: /app
+
+  workspace-report:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_report
+    ports:
+      - "8090:8090"
+    depends_on:
+      - db-report
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./Report-Service:/app
+    working_dir: /app  
+
+
+networks:
+  red_interna_proyecto:
+
+volumes:
+  persistencia_auth:
+  persistencia_users:
+  persistencia_books:
+  persistencia_loans:
+  persistencia_inventory:
+  persistencia_return:
+  persistencia_search:
+  persistencia_fine:
+  persistencia_notification:
+  persistencia_report:

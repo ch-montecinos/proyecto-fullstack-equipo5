@@ -1,0 +1,16 @@
+# Compilados de Java / Maven
+**/target/
+*.class
+
+# Carpetas de editores e IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
