@@ -1,8 +1,10 @@
 package cl.duoc.backend_api.controller;
 
 import cl.duoc.backend_api.model.Return;
-import cl.duoc.backend_api.repository.ReturnRepository;
+import cl.duoc.backend_api.service.ReturnService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,15 +14,16 @@ import java.util.List;
 public class ReturnController {
 
     @Autowired
-    private ReturnRepository repository;
+    private ReturnService returnService;
 
     @GetMapping
     public List<Return> getAll() {
-        return repository.findAll();
+        return returnService.findAll();
     }
 
     @PostMapping
-    public Return create(@RequestBody Return returnEntity) {
-        return repository.save(returnEntity);
+    public ResponseEntity<Return> create(@RequestBody Return returnEntity) {
+        Return savedReturn = returnService.save(returnEntity);
+        return new ResponseEntity<>(savedReturn, HttpStatus.CREATED);
     }
 }

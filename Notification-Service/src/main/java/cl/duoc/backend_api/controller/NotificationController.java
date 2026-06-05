@@ -1,8 +1,10 @@
 package cl.duoc.backend_api.controller;
 
 import cl.duoc.backend_api.model.Notification;
-import cl.duoc.backend_api.repository.NotificationRepository;
+import cl.duoc.backend_api.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,15 +14,16 @@ import java.util.List;
 public class NotificationController {
 
     @Autowired
-    private NotificationRepository repository;
+    private NotificationService notificationService;
 
     @GetMapping
     public List<Notification> getAll() {
-        return repository.findAll();
+        return notificationService.findAll();
     }
 
     @PostMapping
-    public Notification create(@RequestBody Notification notification) {
-        return repository.save(notification);
+    public ResponseEntity<Notification> create(@RequestBody Notification notification) {
+        Notification savedNotification = notificationService.save(notification);
+        return new ResponseEntity<>(savedNotification, HttpStatus.CREATED);
     }
 }

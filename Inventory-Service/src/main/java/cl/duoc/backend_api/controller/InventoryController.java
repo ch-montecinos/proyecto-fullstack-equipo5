@@ -1,8 +1,10 @@
 package cl.duoc.backend_api.controller;
 
 import cl.duoc.backend_api.model.Inventory;
-import cl.duoc.backend_api.repository.InventoryRepository;
+import cl.duoc.backend_api.service.InventoryService; // IMPORTAMOS EL NUEVO SERVICE
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,15 +14,21 @@ import java.util.List;
 public class InventoryController {
 
     @Autowired
-    private InventoryRepository repo;
+    private InventoryService inventoryService; // CAMBIADO: Apuntamos al Service
 
     @GetMapping
-    public List<Inventory> listar() {
-        return repo.findAll();
+    public ResponseEntity<List<Inventory>> listar() {
+        // Solicitamos la lista al Service y devolvemos 200 OK
+        List<Inventory> stock = inventoryService.obtenerTodos();
+        return ResponseEntity.ok(stock);
     }
 
     @PostMapping
-    public Inventory guardar(@RequestBody Inventory i) {
-        return repo.save(i);
+    public ResponseEntity<Inventory> guardar(@RequestBody Inventory i) {
+        // Delegamos la persistencia a la capa de negocio
+        Inventory stockGuardado = inventoryService.guardarInventory(i);
+        
+        // Devolvemos el estatus 201 Created reglamentario para inserciones
+        return ResponseEntity.status(HttpStatus.CREATED).body(stockGuardado);
     }
 }

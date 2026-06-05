@@ -1,8 +1,10 @@
 package cl.duoc.backend_api.controller;
 
 import cl.duoc.backend_api.model.Book;
-import cl.duoc.backend_api.repository.BookRepository;
+import cl.duoc.backend_api.service.BookService; 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,15 +14,19 @@ import java.util.List;
 public class BookController {
 
     @Autowired
-    private BookRepository repo;
+    private BookService bookService; // CAMBIADO: Ahora llamamos al Service, no al Repo
 
     @GetMapping
-    public List<Book> listar() {
-        return repo.findAll();
+    public ResponseEntity<List<Book>> listar() {
+        List<Book> libros = bookService.obtenerTodos();
+        return ResponseEntity.ok(libros);
     }
 
     @PostMapping
-    public Book crear(@RequestBody Book b) {
-        return repo.save(b);
+    public ResponseEntity<Book> crear(@RequestBody Book b) {
+        
+        Book libroCreado = bookService.guardarLibro(b);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(libroCreado);
     }
 }

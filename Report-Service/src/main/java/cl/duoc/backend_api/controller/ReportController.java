@@ -1,8 +1,10 @@
 package cl.duoc.backend_api.controller;
 
 import cl.duoc.backend_api.model.Report;
-import cl.duoc.backend_api.repository.ReportRepository;
+import cl.duoc.backend_api.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,15 +14,16 @@ import java.util.List;
 public class ReportController {
 
     @Autowired
-    private ReportRepository repository;
+    private ReportService reportService;
 
     @GetMapping
     public List<Report> getAll() {
-        return repository.findAll();
+        return reportService.findAll();
     }
 
     @PostMapping
-    public Report create(@RequestBody Report report) {
-        return repository.save(report);
+    public ResponseEntity<Report> create(@RequestBody Report report) {
+        Report savedReport = reportService.save(report);
+        return new ResponseEntity<>(savedReport, HttpStatus.CREATED);
     }
 }
