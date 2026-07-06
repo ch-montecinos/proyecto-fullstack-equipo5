@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  # --- INFRAESTRUCTURA BASE ---
+  eureka-server:
+    image: steeltoeoss/eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - red_interna_proyecto
+
   # --- BASES DE DATOS (MySQL Independientes) ---
   db-auth:
     image: mysql:8.0
@@ -121,12 +130,9 @@ services:
       MYSQL_USER: desarrollador
       MYSQL_PASSWORD: password_seguro_123
     networks:
-      - red_interna_proyecto    
-
-
+      - red_interna_proyecto 
 
   # --- ENTORNOS DE TRABAJO (Maven/Java 21) ---
-
   workspace-auth:
     image: maven:3.9-eclipse-temurin-21
     container_name: entorno_auth
@@ -198,7 +204,6 @@ services:
     working_dir: /app
 
   # --- NUEVOS ENTORNOS DE TRABAJO (Maven) ---
-
   workspace-return:
     image: maven:3.9-eclipse-temurin-21
     container_name: entorno_return
@@ -269,6 +274,20 @@ services:
       - ./Report-Service:/app
     working_dir: /app  
 
+  # --- API GATEWAY CENTRAL ---
+  workspace-gateway:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno_gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./api-gateway:/app
+    working_dir: /app
 
 networks:
   red_interna_proyecto:

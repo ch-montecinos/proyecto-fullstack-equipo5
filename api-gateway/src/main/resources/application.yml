@@ -6,18 +6,40 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      # Descubrimiento dinámico de rutas basado en Eureka
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      
+      # Rutas explícitas y semánticas usando el Balanceador de Carga de Eureka
       routes:
         - id: user-service
-          uri: http://localhost:8082
+          uri: lb://user-service     # <-- Cambiado de localhost a Balanceo de Carga con Eureka
           predicates:
             - Path=/api/users/**
 
         - id: book-service
-          uri: http://localhost:8083
+          uri: lb://book-service     # <-- Conecta directo usando el nombre registrado de Book
           predicates:
             - Path=/api/books/**
 
         - id: loan-service
-          uri: http://localhost:8084
+          uri: lb://loan-service     # <-- Conecta directo usando el nombre registrado de Loan
           predicates:
             - Path=/api/loans/**
+
+        - id: auth-service
+          uri: lb://auth-service     # <-- Agregamos Auth para que Postman pueda loguearse vía Gateway
+          predicates:
+            - Path=/api/auth/**
+
+# Configuración obligatoria para enlazar el Gateway al clúster de Eureka en Docker
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
